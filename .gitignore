@@ -1,0 +1,7 @@
+.env
+__pycache__
+node_modules
+.chroma
+chroma_db
+*.pyc
+.DS_Store

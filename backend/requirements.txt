@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+python-dotenv
+langchain
+langchain-openai
+langchain-community
+langchain-core
+langgraph
+chromadb
+yt-dlp
+youtube-transcript-api
+openai-whisper
+sentence-transformers
+httpx
+pydantic
