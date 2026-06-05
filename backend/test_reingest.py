@@ -4,7 +4,7 @@ from vectorstore.chroma_store import clear_collection
 from vectorstore.embedder import ingest_video
 
 URL_A = 'https://www.instagram.com/reel/DZGIPMWzgS2/?igsh=Yzc0a3d2dWMxYWV4'
-URL_B = 'https://www.instagram.com/reel/DShsISsEtAq/?igsh=MWIxbWVmcnVveGRvNw=='
+URL_B = 'https://www.instagram.com/reel/DWexq0fExIy/?igsh=MXV6dXprM2trMDExYQ=='
 
 print(f"Fetching Video A from: {URL_A}")
 data_a = get_video_data(URL_A)

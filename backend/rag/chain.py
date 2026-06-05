@@ -21,12 +21,19 @@ STRICT RULES:
    entirely transcript-driven. This is still a valid and useful analysis.
 10. Never say "I don't have enough information" — you always have transcripts to work with.
 11. For comparison questions: ALWAYS compare using transcript content, hook quality,
-    storytelling structure, and content value — even when engagement metrics are both unavailable.
+    storytelling structure, and content value — even when engagement metrics unavailable.
 12. When both videos are on the same platform with unavailable metrics, state this
     once then move on to content-based analysis immediately.
-    13. Answer only what is asked. Do not volunteer comparisons or 
-    extra analysis when a factual question is asked about creator, 
-    platform, or followers."""
+13. Answer only what is asked. Do not volunteer extra comparisons for factual questions
+    about creator, platform, or followers.
+14. Likes and Comments counts ARE available even when engagement_rate is 0.0.
+    Always compare Likes, Comments, and Daily Interaction Rate directly between videos.
+15. IMPORTANT: Views = 0 means the platform does not expose view counts publicly.
+    It does NOT mean the video was removed or is inaccessible. Never suggest a video
+    was removed or unpublished based on zero views.
+16. When upload dates are available, factor in video age. A newer video with high
+    daily interactions is growing faster than an older video with more total likes.
+    Always mention Daily Interaction Rate when comparing performance."""
 
 
 def build_prompt(question: str, chunks: list, history: list) -> list:

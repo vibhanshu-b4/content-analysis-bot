@@ -36,16 +36,21 @@ def ingest_video(video_data: dict, label: str) -> int:
 Title: {base_meta['title']}
 Creator: {base_meta['creator']}
 Platform: {base_meta['platform'].upper()}
-Views: {views:,}
+Upload Date: {video_data.get('upload_date_formatted', 'Unknown')}
+Days Since Upload: {video_data.get('days_since_upload', 0)} days
+Views: {views:,} (unavailable - platform restriction)
 Likes: {likes:,}
 Comments: {comments:,}
-Engagement Rate: {engagement_rate}%
+Total Interactions (Likes + Comments): {likes + comments:,}
+Daily Interaction Rate: {video_data.get('daily_interactions', 0)} interactions/day
+Engagement Rate: {engagement_rate}% (0.0 because views unavailable)
 Duration: {video_data.get('duration', 'Unknown')} seconds
 Followers: {video_data.get('followers') or 'Unavailable'}
 
-NOTE: If views=0 or engagement_rate=0.0 this means the platform
-does not expose these metrics publicly. They are unavailable due
-to platform restrictions, not because engagement did not happen."""
+NOTE: Views unavailable due to platform restrictions.
+Use Total Interactions and Daily Interaction Rate to compare engagement.
+Daily Interaction Rate accounts for video age — newer videos with high
+daily rates are growing faster than older videos with more total likes."""
 
     stats_embedding = embedder.embed_documents([stats_text])[0]
     collection.add(
