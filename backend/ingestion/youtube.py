@@ -4,13 +4,21 @@ import yt_dlp
 
 def get_transcript(video_url: str) -> str:
     try:
-        if "youtu.be/" in video_url:
-            video_id = video_url.split("youtu.be/", 1)[1].split("?", 1)[0].split("&", 1)[0].split("/", 1)[0]
+        # extract video ID
+        if "watch?v=" in video_url:
+            video_id = video_url.split("watch?v=")[1].split("&")[0]
+        elif "youtu.be/" in video_url:
+            video_id = video_url.split("youtu.be/")[1].split("?")[0]
         else:
-            video_id = video_url.split("v=", 1)[1].split("&", 1)[0].split("#", 1)[0]
+            raise ValueError("Unrecognized YouTube URL format")
 
-        transcript = YouTubeTranscriptApi.get_transcript(video_id)
-        return " ".join(entry["text"] for entry in transcript)
+        # new API style (works on all versions)
+        from youtube_transcript_api import YouTubeTranscriptApi
+        ytt_api = YouTubeTranscriptApi()
+        fetched = ytt_api.fetch(video_id)
+        transcript = " ".join([entry.text for entry in fetched])
+        return transcript
+
     except Exception as e:
         raise ValueError(f"Could not get transcript: {str(e)}")
 

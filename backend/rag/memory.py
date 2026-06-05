@@ -1,24 +1,16 @@
-from langchain.memory import ConversationBufferWindowMemory
-
 _sessions = {}
 
-def get_memory(session_id: str) -> ConversationBufferWindowMemory:
+def get_memory(session_id: str) -> list:
     if session_id not in _sessions:
-        _sessions[session_id] = ConversationBufferWindowMemory(
-            k=6, return_messages=True, memory_key="chat_history"
-        )
+        _sessions[session_id] = []
     return _sessions[session_id]
 
 def get_history(session_id: str) -> list:
     mem = get_memory(session_id)
-    messages = mem.chat_memory.messages
-    history = []
-    for m in messages:
-        role = "user" if m.type == "human" else "assistant"
-        history.append({"role": role, "content": m.content})
-    return history
+    return mem[-12:]
 
 def save_turn(session_id: str, human: str, ai: str):
     mem = get_memory(session_id)
-    mem.chat_memory.add_user_message(human)
-    mem.chat_memory.add_ai_message(ai)
+    mem.append({"role": "user", "content": human})
+    mem.append({"role": "assistant", "content": ai})
+    _sessions[session_id] = mem[-12:]
