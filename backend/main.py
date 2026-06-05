@@ -15,9 +15,8 @@ import json
 
 
 class IngestRequest(BaseModel):
-    youtube_url: str
-    instagram_url: str
-
+    video_url_a: str
+    video_url_b: str
 
 class ChatRequest(BaseModel):
     question: str
@@ -44,19 +43,28 @@ def health():
 @app.post("/ingest")
 async def ingest(request: IngestRequest):
     try:
-        yt_data = get_youtube_data(request.youtube_url)
-        ig_data = get_instagram_data(request.instagram_url)
-        summary_a = build_video_summary(yt_data, "A")
-        summary_b = build_video_summary(ig_data, "B")
+        from ingestion.detector import get_video_data
+
+        print(f"Fetching Video A: {request.video_url_a}")
+        data_a = get_video_data(request.video_url_a)
+        
+        print(f"Fetching Video B: {request.video_url_b}")
+        data_b = get_video_data(request.video_url_b)
+
+        summary_a = build_video_summary(data_a, "A")
+        summary_b = build_video_summary(data_b, "B")
+
         clear_collection()
+
         chunks_a = ingest_video(summary_a, "A")
         chunks_b = ingest_video(summary_b, "B")
+
         return {
             "video_a": summary_a,
             "video_b": summary_b,
             "chunks_a": chunks_a,
             "chunks_b": chunks_b,
-            "status": "ok",
+            "status": "ok"
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
