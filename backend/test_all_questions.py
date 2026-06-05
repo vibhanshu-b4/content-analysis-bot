@@ -3,11 +3,11 @@ from rag.chain import get_llm, build_prompt
 from rag.retriever import retrieve_chunks
 
 questions = [
-    "Why did Video A get more engagement than Video B?",
-    "What is the engagement rate of each video?",
-    "Compare the hooks in the first 5 seconds of each video.",
-    "Who is the creator of Video B and what is their follower count?",
-    "Suggest improvements for Video B based on what worked in Video A."
+    "Compare Video A and Video B. Which has better content quality and why? Use transcript evidence.",
+    "What is the engagement rate of each video? If unavailable explain why and compare based on content instead.",
+    "Compare the hooks in the first 5 seconds of each video. Quote the actual opening words.",
+    "Who is the creator of Video A and Video B? What platform are they on and what is their follower count?",
+    "Suggest 3 specific improvements for Video B based on what worked in Video A. Reference specific transcript moments."
 ]
 
 async def test():

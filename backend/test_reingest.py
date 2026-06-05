@@ -3,8 +3,8 @@ from ingestion.metrics import build_video_summary
 from vectorstore.chroma_store import clear_collection
 from vectorstore.embedder import ingest_video
 
-URL_A = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
-URL_B = 'https://www.instagram.com/reel/DX1pDytyyHh/?igsh=eTN5ejY5YTg2MzFy'
+URL_A = 'https://www.instagram.com/reel/DZGIPMWzgS2/?igsh=Yzc0a3d2dWMxYWV4'
+URL_B = 'https://www.instagram.com/reel/DShsISsEtAq/?igsh=MWIxbWVmcnVveGRvNw=='
 
 print(f"Fetching Video A from: {URL_A}")
 data_a = get_video_data(URL_A)

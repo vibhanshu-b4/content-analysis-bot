@@ -4,7 +4,6 @@ import yt_dlp
 
 def get_transcript(video_url: str) -> str:
     try:
-        # extract video ID
         if "watch?v=" in video_url:
             video_id = video_url.split("watch?v=")[1].split("&")[0]
         elif "youtu.be/" in video_url:
@@ -12,10 +11,19 @@ def get_transcript(video_url: str) -> str:
         else:
             raise ValueError("Unrecognized YouTube URL format")
 
-        # new API style (works on all versions)
         from youtube_transcript_api import YouTubeTranscriptApi
         ytt_api = YouTubeTranscriptApi()
-        fetched = ytt_api.fetch(video_id)
+
+        # try English first, then Hindi, then any available
+        try:
+            fetched = ytt_api.fetch(video_id, languages=["en"])
+        except Exception:
+            try:
+                fetched = ytt_api.fetch(video_id, languages=["hi"])
+                print("Hindi transcript fetched, note: in original Hindi")
+            except Exception:
+                fetched = ytt_api.fetch(video_id)
+
         transcript = " ".join([entry.text for entry in fetched])
         return transcript
 

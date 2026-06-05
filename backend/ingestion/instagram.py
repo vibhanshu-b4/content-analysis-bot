@@ -24,11 +24,33 @@ def download_audio(video_url: str) -> str:
 def get_transcript(audio_path: str) -> str:
     try:
         import whisper
+        import os
+        model = whisper.load_model("small")
 
-        model = whisper.load_model("base")
-        result = model.transcribe(audio_path)
+        audio = whisper.load_audio(audio_path)
+        audio = whisper.pad_or_trim(audio)
+        mel = whisper.log_mel_spectrogram(audio).to(model.device)
+        _, probs = model.detect_language(mel)
+        detected_lang = max(probs, key=probs.get)
+        print(f"Detected language: {detected_lang}")
+
+        if detected_lang == "en":
+            # English — just transcribe normally
+            result = model.transcribe(audio_path, task="transcribe")
+        else:
+            # Non-English — translate to English for better RAG quality
+            print(f"Non-English detected ({detected_lang}), translating to English...")
+            result = model.transcribe(
+                audio_path,
+                task="translate",  # this translates to English
+                language=detected_lang
+            )
+
+        transcript = result["text"].strip()
+        print(f"Transcript preview: {transcript[:100]}")
         os.remove(audio_path)
-        return str(result["text"])
+        return transcript
+
     except Exception as e:
         raise ValueError(str(e))
 
