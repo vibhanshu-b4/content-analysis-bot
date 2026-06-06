@@ -60,12 +60,42 @@ async def ingest(request: IngestRequest):
         chunks_b = ingest_video(summary_b, "B")
 
         return {
-            "video_a": summary_a,
-            "video_b": summary_b,
-            "chunks_a": chunks_a,
-            "chunks_b": chunks_b,
-            "status": "ok"
-        }
+    "video_a": {
+        "title": summary_a.get("title"),
+        "creator": summary_a.get("creator"),
+        "platform": summary_a.get("platform"),
+        "likes": summary_a.get("likes"),
+        "comments": summary_a.get("comments"),
+        "views": summary_a.get("views"),
+        "engagement_rate": summary_a.get("engagement_rate"),
+        "daily_interactions": summary_a.get("daily_interactions"),
+        "upload_date_formatted": summary_a.get("upload_date_formatted"),
+        "days_since_upload": summary_a.get("days_since_upload"),
+        "duration": summary_a.get("duration"),
+        "followers": summary_a.get("followers"),
+        "source_url": summary_a.get("source_url"),
+        "transcript": summary_a.get("transcript"),
+        "chunks": chunks_a
+    },
+    "video_b": {
+        "title": summary_b.get("title"),
+        "creator": summary_b.get("creator"),
+        "platform": summary_b.get("platform"),
+        "likes": summary_b.get("likes"),
+        "comments": summary_b.get("comments"),
+        "views": summary_b.get("views"),
+        "engagement_rate": summary_b.get("engagement_rate"),
+        "daily_interactions": summary_b.get("daily_interactions"),
+        "upload_date_formatted": summary_b.get("upload_date_formatted"),
+        "days_since_upload": summary_b.get("days_since_upload"),
+        "duration": summary_b.get("duration"),
+        "followers": summary_b.get("followers"),
+        "source_url": summary_b.get("source_url"),
+        "transcript": summary_b.get("transcript"),
+        "chunks": chunks_b
+    },
+    "status": "ok"
+}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

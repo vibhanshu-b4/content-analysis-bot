@@ -51,7 +51,13 @@ def retrieve_chunks(question: str, k: int = 6) -> list:
         "engagement rate", "views", "likes", "comments", "follower", "who is", "creator"
     ])
 
+    needs_content_context = any(word in question_lower for word in [
+        "compare", "why", "quality", "content", "hook", "story", "tone"
+    ])
+
     if needs_stats_only:
+        if not needs_content_context:
+            return stats
         query_embedding = embedder.embed_query(question)
         collection = get_collection()
         results = collection.query(
@@ -62,7 +68,7 @@ def retrieve_chunks(question: str, k: int = 6) -> list:
         extra = []
         for i, doc in enumerate(results["documents"][0]):
             meta = results["metadatas"][0][i]
-            if meta.get("type") == "stats":
+            if meta.get("type") in ("stats", "hook"):
                 continue
             extra.append({
                 "text": doc,
@@ -105,7 +111,7 @@ def retrieve_chunks(question: str, k: int = 6) -> list:
                     })
             except Exception:
                 pass
-        return stats + hook_chunks
+        return hook_chunks
 
     # default semantic search
     query_embedding = embedder.embed_query(question)
@@ -119,7 +125,7 @@ def retrieve_chunks(question: str, k: int = 6) -> list:
     all_chunks = []
     for i, doc in enumerate(results["documents"][0]):
         meta = results["metadatas"][0][i]
-        if meta.get("type") == "stats":
+        if meta.get("type") in ("stats", "hook"):
             continue
         all_chunks.append({
             "text": doc,
