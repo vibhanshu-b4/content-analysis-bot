@@ -1,5 +1,6 @@
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from sqlalchemy import label
 from vectorstore.chroma_store import get_collection
 
 _embedder = None
@@ -9,6 +10,51 @@ def get_embedder():
     if _embedder is None:
         _embedder = HuggingFaceEmbeddings(model_name="BAAI/bge-m3")
     return _embedder
+
+
+def split_into_semantic_chunks(transcript: str, label: str) -> list:
+    sentences = transcript.replace(".\n", ". ").split(". ")
+    sentences = [s.strip() for s in sentences if len(s.strip()) > 20]
+    
+    chunks = []
+    
+    # chunk 0 — always the hook (first 2 sentences)
+    hook = ". ".join(sentences[:2])
+    chunks.append({
+        "text": f"[HOOK]: {hook}",
+        "type": "hook",
+        "index": 0
+    })
+    
+    # chunk 1 — problem/context (sentences 3-6)
+    if len(sentences) > 2:
+        context = ". ".join(sentences[2:6])
+        chunks.append({
+            "text": f"[CONTEXT]: {context}",
+            "type": "context",
+            "index": 1
+        })
+    
+    # chunk 2 — main content (sentences 7-14)
+    if len(sentences) > 6:
+        main = ". ".join(sentences[6:14])
+        chunks.append({
+            "text": f"[MAIN CONTENT]: {main}",
+            "type": "main",
+            "index": 2
+        })
+    
+    # chunk 3 — CTA/conclusion (last 3 sentences)
+    if len(sentences) > 10:
+        cta = ". ".join(sentences[-3:])
+        chunks.append({
+            "text": f"[CONCLUSION/CTA]: {cta}",
+            "type": "cta",
+            "index": 3
+        })
+    
+    return chunks
+
 
 
 def ingest_video(video_data: dict, label: str) -> int:
@@ -74,19 +120,25 @@ daily rates are growing faster than older videos with more total likes."""
     print(f"  Stored {label}_hook")
 
     # 3. store transcript chunks
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=512, chunk_overlap=50
-    )
-    chunks = splitter.split_text(transcript)
-    if chunks:
-        chunk_embeddings = embedder.embed_documents(chunks)
-        for i, chunk in enumerate(chunks):
+    # 3. store transcript chunks (semantic chunking)
+    semantic_chunks = split_into_semantic_chunks(transcript, label)
+
+    if semantic_chunks:
+        chunk_texts = [c["text"] for c in semantic_chunks]
+        chunk_embeddings = embedder.embed_documents(chunk_texts)
+
+        for i, chunk in enumerate(semantic_chunks):
             collection.add(
                 ids=[f"{label}_chunk_{i}"],
                 embeddings=[chunk_embeddings[i]],
-                documents=[chunk],
-                metadatas=[{**base_meta, "chunk_index": i + 1, "type": "transcript"}]
-            )
-        print(f"  Stored {len(chunks)} transcript chunks for {label}")
+                documents=[chunk["text"]],
+                metadatas=[{
+                **base_meta,
+                "chunk_index": i,
+                "chunk_type": chunk["type"],
+                "type": "transcript"
+            }]
+        )
+        print(f"  Stored {len(semantic_chunks)} semantic chunks for {label}")
 
-    return len(chunks) + 2  # chunks + stats + hook
+    return len(semantic_chunks) + 2
