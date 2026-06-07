@@ -27,7 +27,10 @@ RULES:
 11. Structure: bullet points for comparisons, direct sentences for facts.
 12. If both videos are on the same platform say it once then move on.
 13. For improvement suggestions, always quote a specific transcript moment
-    then explain exactly what to change and why. No generic advice."""
+    then explain exactly what to change and why. No generic advice.
+    14. Do NOT write citations inside your response text like [Video A, chunk 1].
+    Citations are handled separately by the system. Just write clean prose.
+    """
 
 def build_prompt(question: str, chunks: list, history: list) -> list:
     context_parts = []
