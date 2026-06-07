@@ -9,26 +9,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        bg: {
-          primary: "#0a0a0a",
-          secondary: "#111111",
-          card: "#141414",
-          hover: "#1a1a1a",
-        },
-        accent: {
-          green: "#22c55e",
-          amber: "#f59e0b",
-          blue: "#3b82f6",
-          red: "#ef4444",
-        },
-        border: {
-          DEFAULT: "rgba(255,255,255,0.08)",
-          hover: "rgba(255,255,255,0.15)",
-        }
+        base: "#050816",
+        navy: "#0A0F2D",
+        cyan: "#00D4FF",
+        purple: "#7C3AED",
+        indigo: "#6366F1",
+        pink: "#EC4899",
       },
       fontFamily: {
-        sans: ["Geist", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
+        sans: ["Inter", "sans-serif"],
+        display: ["Poppins", "sans-serif"],
+      },
+      borderRadius: {
+        "2xl": "20px",
+        "3xl": "24px",
       },
     },
   },
