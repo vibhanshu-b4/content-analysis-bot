@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 
 interface Citation {
   video_id: string;
@@ -302,28 +303,42 @@ export default function ChatPanel({ isReady }: ChatPanelProps) {
 
             {/* bubble */}
             <div style={{
-              maxWidth: "100%",
-              padding: "10px 14px",
-              borderRadius: msg.role === "user"
-                ? "14px 4px 14px 14px"
-                : "4px 14px 14px 14px",
-              fontSize: "13px",
-              lineHeight: 1.65,
-              whiteSpace: "pre-wrap",
-              fontFamily: "Inter, sans-serif",
-              background: msg.role === "user"
-                ? "rgba(99,102,241,0.15)"
-                : "rgba(255,255,255,0.04)",
-              border: msg.role === "user"
-                ? "1px solid rgba(99,102,241,0.25)"
-                : "1px solid rgba(255,255,255,0.07)",
-              color: "#fff",
-            }}>
-              {msg.content}
-              {msg.streaming && (
-                <span className="cursor" />
-              )}
-            </div>
+  maxWidth: "100%",
+  padding: "10px 14px",
+  borderRadius: msg.role === "user"
+    ? "14px 4px 14px 14px"
+    : "4px 14px 14px 14px",
+  fontSize: "13px",
+  lineHeight: 1.65,
+  fontFamily: "Inter, sans-serif",
+  background: msg.role === "user"
+    ? "rgba(99,102,241,0.15)"
+    : "rgba(255,255,255,0.04)",
+  border: msg.role === "user"
+    ? "1px solid rgba(99,102,241,0.25)"
+    : "1px solid rgba(255,255,255,0.07)",
+  color: "#fff",
+}}>
+  {msg.role === "assistant" && !msg.streaming ? (
+    <ReactMarkdown
+      components={{
+        p: ({children}) => <p style={{ marginBottom: "8px" }}>{children}</p>,
+        strong: ({children}) => <strong style={{ color: "#00D4FF", fontWeight: 600 }}>{children}</strong>,
+        ul: ({children}) => <ul style={{ paddingLeft: "16px", marginBottom: "8px" }}>{children}</ul>,
+        li: ({children}) => <li style={{ marginBottom: "4px" }}>{children}</li>,
+        h1: ({children}) => <h1 style={{ fontSize: "15px", fontWeight: 600, marginBottom: "8px", color: "#fff" }}>{children}</h1>,
+        h2: ({children}) => <h2 style={{ fontSize: "14px", fontWeight: 600, marginBottom: "6px", color: "#fff" }}>{children}</h2>,
+      }}
+    >
+      {msg.content}
+    </ReactMarkdown>
+  ) : (
+    <span style={{ whiteSpace: "pre-wrap" }}>
+      {msg.content}
+      {msg.streaming && <span className="cursor" />}
+    </span>
+  )}
+</div>
 
             {/* citations */}
             {msg.citations && msg.citations.length > 0 && !msg.streaming && (

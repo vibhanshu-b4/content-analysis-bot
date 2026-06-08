@@ -59,16 +59,10 @@ function Stat({ label, value, color, sub }: StatProps) {
 
 function VideoCard({ label, data }: { label: string; data: VideoData }) {
   const color = label === "A" ? "#00D4FF" : "#EC4899";
-  const glow = label === "A"
-    ? "rgba(0,212,255,0.15)"
-    : "rgba(236,72,153,0.15)";
+  const glow = label === "A" ? "rgba(0,212,255,0.15)" : "rgba(236,72,153,0.15)";
 
   return (
-    <div className="glass fade-up" style={{
-      padding: "20px",
-      boxShadow: `0 0 30px ${glow}`,
-    }}>
-      {/* label badge */}
+    <div className="glass fade-up" style={{ padding: "20px", boxShadow: `0 0 30px ${glow}` }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px" }}>
         <div style={{
           background: `linear-gradient(135deg, ${color}22, ${color}44)`,
@@ -94,7 +88,6 @@ function VideoCard({ label, data }: { label: string; data: VideoData }) {
         </div>
       </div>
 
-      {/* creator */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
         <div style={{
           width: "36px", height: "36px",
@@ -103,26 +96,25 @@ function VideoCard({ label, data }: { label: string; data: VideoData }) {
           border: `1px solid ${color}44`,
           display: "flex", alignItems: "center", justifyContent: "center",
           fontSize: "13px", fontWeight: 700, color: color,
-          boxShadow: `0 0 12px ${glow}`
+          boxShadow: `0 0 12px ${glow}`,
+          flexShrink: 0,
         }}>
           {data.creator?.[0]?.toUpperCase() || "?"}
         </div>
-        <div>
-          <div style={{ fontSize: "14px", fontWeight: 600 }}>{data.creator}</div>
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontSize: "14px", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" as const }}>{data.creator}</div>
           <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)" }}>
             {data.upload_date_formatted} · {data.days_since_upload}d ago
           </div>
         </div>
       </div>
 
-      {/* stats grid */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "14px" }}>
         <Stat label="Likes" value={fmt(data.likes)} color={color} />
         <Stat label="Comments" value={fmt(data.comments)} />
         <Stat label="Daily" value={`${data.daily_interactions}/d`} color="#10B981" sub="rate" />
       </div>
 
-      {/* duration + progress bar */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
         <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)" }}>Duration</span>
         <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>
@@ -145,7 +137,6 @@ function IngestForm({ onIngest, isLoading }: {
 
   return (
     <div style={{ width: "100%", maxWidth: "520px" }}>
-      {/* hero text */}
       <div style={{ marginBottom: "32px" }}>
         <div style={{
           fontSize: "11px", fontWeight: 600,
@@ -157,11 +148,12 @@ function IngestForm({ onIngest, isLoading }: {
           AI Video Intelligence
         </div>
         <h1 style={{
-          fontSize: "38px",
+          fontSize: "clamp(26px, 4vw, 38px)",
           fontWeight: 700,
           fontFamily: "Poppins, sans-serif",
           lineHeight: 1.15,
-          marginBottom: "12px"
+          marginBottom: "12px",
+          color: "#fff",
         }}>
           Compare <span className="grad-text">any two</span><br />social videos
         </h1>
@@ -171,12 +163,11 @@ function IngestForm({ onIngest, isLoading }: {
         </p>
       </div>
 
-      {/* inputs */}
       <div style={{ display: "flex", flexDirection: "column" as const, gap: "12px", marginBottom: "16px" }}>
         {[
-          { val: urlA, set: setUrlA, label: "Video A", color: "#00D4FF", placeholder: "YouTube or Instagram URL" },
-          { val: urlB, set: setUrlB, label: "Video B", color: "#EC4899", placeholder: "YouTube or Instagram URL" },
-        ].map(({ val, set, label, color, placeholder }) => (
+          { val: urlA, set: setUrlA, label: "Video A", color: "#00D4FF" },
+          { val: urlB, set: setUrlB, label: "Video B", color: "#EC4899" },
+        ].map(({ val, set, label, color }) => (
           <div key={label} style={{ position: "relative" as const }}>
             <div style={{
               position: "absolute" as const,
@@ -187,7 +178,8 @@ function IngestForm({ onIngest, isLoading }: {
               border: `1px solid ${color}44`,
               borderRadius: "6px",
               padding: "2px 7px",
-              pointerEvents: "none" as const
+              pointerEvents: "none" as const,
+              zIndex: 1,
             }}>
               {label}
             </div>
@@ -195,13 +187,13 @@ function IngestForm({ onIngest, isLoading }: {
               type="text"
               value={val}
               onChange={e => set(e.target.value)}
-              placeholder={placeholder}
+              placeholder="YouTube or Instagram URL"
               style={{
                 width: "100%",
                 background: "rgba(255,255,255,0.05)",
-                border: `1px solid rgba(255,255,255,0.1)`,
+                border: "1px solid rgba(255,255,255,0.1)",
                 borderRadius: "14px",
-                padding: "14px 16px 14px 72px",
+                padding: "14px 16px 14px 80px",
                 fontSize: "13px",
                 color: "#fff",
                 outline: "none",
@@ -227,9 +219,7 @@ function IngestForm({ onIngest, isLoading }: {
         disabled={isLoading || !urlA || !urlB}
         style={{ width: "100%", padding: "15px", fontSize: "15px" }}
       >
-        {isLoading
-          ? "⏳  Analyzing... (2–3 min)"
-          : "✦  Analyze Videos"}
+        {isLoading ? "⏳  Analyzing... (2–3 min)" : "✦  Analyze Videos"}
       </button>
 
       {isLoading && (
@@ -243,7 +233,7 @@ function IngestForm({ onIngest, isLoading }: {
           color: "rgba(255,255,255,0.5)",
           lineHeight: 1.6
         }}>
-          🔄 Downloading transcripts → Whisper transcription → BGE-M3 embeddings → ChromaDB indexing
+          🔄 Downloading transcripts → Whisper → BGE-M3 embeddings → ChromaDB indexing
         </div>
       )}
     </div>
@@ -277,18 +267,26 @@ export default function Home() {
   };
 
   return (
-    <div style={{ height: "100vh", display: "flex", flexDirection: "column", position: "relative", zIndex: 1 }}>
+    <div style={{
+      height: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      overflow: "hidden",
+      position: "relative",
+      zIndex: 1,
+    }}>
 
-      {/* top navbar */}
+      {/* NAVBAR — fixed height, never shrinks */}
       <nav style={{
+        flexShrink: 0,
+        height: "56px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "12px 24px",
+        padding: "0 24px",
         borderBottom: "1px solid rgba(255,255,255,0.06)",
-        background: "rgba(5,8,22,0.8)",
+        background: "rgba(5,8,22,0.92)",
         backdropFilter: "blur(20px)",
-        flexShrink: 0,
         zIndex: 10,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -299,70 +297,79 @@ export default function Home() {
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: "14px"
           }}>⚡</div>
-          <span style={{ fontFamily: "Poppins, sans-serif", fontWeight: 700, fontSize: "15px" }}>
-            VideoRAG
+          <span style={{ fontFamily: "Poppins, sans-serif", fontWeight: 700, fontSize: "15px", color: "#fff" }}>
+            ClipMind
           </span>
         </div>
 
         <div style={{ display: "flex", gap: "4px" }}>
           {["Dashboard", "Analytics", "Compare", "Settings"].map((item, i) => (
-            <div key={item} className={`nav-pill ${i === 0 ? "active" : ""}`}>
+            <div key={item} className={`nav-pill${i === 0 ? " active" : ""}`}>
               {item}
             </div>
           ))}
         </div>
 
         <div style={{
-          fontSize: "12px",
+          fontSize: "11px",
           color: "rgba(255,255,255,0.3)",
           fontFamily: "monospace",
           background: "rgba(255,255,255,0.04)",
-          padding: "6px 12px",
+          padding: "5px 12px",
           borderRadius: "8px",
-          border: "1px solid rgba(255,255,255,0.06)"
+          border: "1px solid rgba(255,255,255,0.06)",
+          whiteSpace: "nowrap" as const,
         }}>
           llama3.2 · bge-m3
         </div>
       </nav>
 
-      {/* main content */}
-      <div style={{ flex: 1, overflow: "hidden", display: "flex" }}>
+      {/* CONTENT — takes remaining height, no overflow */}
+      <div style={{
+        flex: 1,
+        minHeight: 0,
+        overflow: "hidden",
+        display: "flex",
+      }}>
 
-        {/* landing — before ingest */}
+        {/* LANDING */}
         {!isIngested && (
           <div style={{
             flex: 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: "40px",
+            overflowY: "auto",
+            padding: "40px 24px",
           }}>
             <IngestForm onIngest={handleIngest} isLoading={isIngesting} />
           </div>
         )}
 
-        {/* dashboard — after ingest */}
+        {/* DASHBOARD */}
         {isIngested && videoA && videoB && (
-          <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+          <div style={{
+            flex: 1,
+            minWidth: 0,
+            display: "flex",
+            overflow: "hidden",
+          }}>
 
-            {/* left panel — video cards */}
+            {/* LEFT — scrollable cards */}
             <div style={{
               flex: 1,
+              minWidth: 0,
+              minHeight: 0,
               overflowY: "auto",
+              overflowX: "hidden",
               padding: "24px",
               display: "flex",
               flexDirection: "column",
               gap: "16px",
             }}>
-              {/* header row */}
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" as const, gap: "8px" }}>
                 <div>
-                  <h2 style={{
-                    fontFamily: "Poppins, sans-serif",
-                    fontSize: "20px",
-                    fontWeight: 700,
-                    marginBottom: "2px"
-                  }}>
+                  <h2 style={{ fontFamily: "Poppins, sans-serif", fontSize: "20px", fontWeight: 700, color: "#fff", marginBottom: "2px" }}>
                     Analysis <span className="grad-text">Complete</span>
                   </h2>
                   <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.35)" }}>
@@ -379,34 +386,26 @@ export default function Home() {
                     padding: "8px 16px",
                     fontSize: "12px",
                     cursor: "pointer",
+                    fontFamily: "Inter, sans-serif",
+                    whiteSpace: "nowrap" as const,
                   }}
                 >
                   ↩ New Analysis
                 </button>
               </div>
 
-              {/* video cards */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: "16px" }}>
                 <VideoCard label="A" data={videoA} />
                 <VideoCard label="B" data={videoB} />
               </div>
 
-              {/* comparison summary card */}
               <div className="glass" style={{ padding: "20px" }}>
-                <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)", marginBottom: "12px", fontWeight: 500 }}>
+                <div style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "1px", color: "rgba(255,255,255,0.35)", marginBottom: "12px" }}>
                   QUICK COMPARISON
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: "12px" }}>
-                  <Stat
-                    label="A — Total Interactions"
-                    value={fmt(videoA.likes + videoA.comments)}
-                    color="#00D4FF"
-                  />
-                  <Stat
-                    label="B — Total Interactions"
-                    value={fmt(videoB.likes + videoB.comments)}
-                    color="#EC4899"
-                  />
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0,1fr))", gap: "12px" }}>
+                  <Stat label="A — Total" value={fmt(videoA.likes + videoA.comments)} color="#00D4FF" />
+                  <Stat label="B — Total" value={fmt(videoB.likes + videoB.comments)} color="#EC4899" />
                   <Stat
                     label="A — Daily Rate"
                     value={`${videoA.daily_interactions}/d`}
@@ -423,16 +422,19 @@ export default function Home() {
               </div>
             </div>
 
-            {/* right panel — chat */}
+            {/* RIGHT — chat panel, fixed width */}
             <div style={{
-              width: "400px",
+              width: "380px",
               flexShrink: 0,
+              minHeight: 0,
               borderLeft: "1px solid rgba(255,255,255,0.06)",
               display: "flex",
               flexDirection: "column",
+              overflow: "hidden",
             }}>
               <ChatPanel isReady={isIngested} />
             </div>
+
           </div>
         )}
       </div>
